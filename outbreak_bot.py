@@ -50,21 +50,53 @@ async def campaign(ctx, campaign_type = None, campaign_name = None):
     else:
         await bot.send_message(ctx.message.channel, 'More coming soon... :star2:')
 
+async def generate_roll_embed(ctx, speed, percentile, diff, dam, dep):
+    embed=discord.Embed(color=0xff7171)
+    embed.add_field(name="Speed", value=str(speed), inline=True)
+    embed.add_field(name="Percentile", value=(str(percentile) + ' **+** ' + str(diff)), inline=True)
+    embed.add_field(name="Damage", value=str(diff), inline=True)
+    embed.add_field(name="Depletion", value=str(dep), inline=True)
+    await bot.send_message(ctx.message.channel, embed=embed)
+
 @bot.command(pass_context=True)
 async def roll(ctx, *args):
-    if (len(args) < 1):
-        await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# black die] [# damage die]```')
+    if (len(args) < 4):
+        await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# difficulty die] [# damage die] [# depletion die]```')
         return
     try:
         speed_num = int(args[0])
+        diff_num = int(args[1])
+        dam_num = int(args[2])
+        dep_num = int(args[3])
     except:
         speed_num = None
-    print(speed_num)
-    if (speed_num is None) or (type(speed_num) is int and speed_num < 1):
-        await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# black die] [# damage die]```')
+        diff_num = None
+        dam_num = None
+        dep_num = None
+        
+    print('speed: ' + str(speed_num) + ' diff: ' + str(diff_num) + ' dam: ' + str(dam_num) + ' dep: ' + str(dep_num))
+    if (speed_num is None) or (diff_num is None) or (dam_num is None) or (dep_num is None):
+        await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# difficulty die] [# damage die] [# depletion die]```')
         return
-    speed_dice = random.randint(1, 6)
+    if (speed_num < 1 or diff_num < 1 or dam_num < 1 or dep_num < 1):
+        await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# difficulty die] [# damage die] [# depletion die]```')
+        return
+
     percentile = random.randint(0, 99)
-    await bot.send_message(ctx.message.channel, 'Your speed is ' + str(speed_dice) + ' and you rolled ' + str(percentile))
+    speed_dice = []
+    diff_dice = []
+    dam_dice = []
+    dep_dice = []
+
+    for i in range(speed_num):
+        speed_dice.append(random.randint(1, 6))
+    for i in range(diff_num):
+        diff_dice.append(random.randint(1, 6))
+    for i in range(dam_num):
+        dam_dice.append(random.randint(1, 6))
+    for i in range(dep_num):
+        dep_dice.append(random.randint(1, 6))
+    
+    await generate_roll_embed(ctx, speed_dice, percentile, diff_dice, dam_dice, dep_dice)
 
 bot.run('key')
