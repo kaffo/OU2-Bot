@@ -1,0 +1,21 @@
+{
+    "campaignName":"",
+    "dateOfCreation":"",
+    "characters":[
+        {
+            "name":"",
+            "player":"",
+            "characterSheet":{
+                "Strength":0,
+                "Perception":0,
+                "Empathy":0,
+                "Willpower":0
+            },
+            "timeSpent":[
+                {
+                    "reason":""
+                }
+            ]
+        }
+    ]
+}

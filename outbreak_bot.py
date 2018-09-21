@@ -1,6 +1,9 @@
+import asyncio
 import discord
 from discord.ext import commands
-import asyncio
+from shutil import copy2
+import os
+import json
 import random
 
 bot = commands.Bot(command_prefix='!')
@@ -19,6 +22,33 @@ async def info(ctx):
     embed.add_field(name="About OU2", value="This bot helps with Outbreak Undead 2E PbP games on Discord", inline=False)
     embed.set_footer(text="Kaffo 2018")
     await bot.send_message(ctx.message.channel, embed=embed)
+
+def check_campaign_exists(campaign_name):
+    files = os.listdir('data\\')
+    for file in files:
+        file_name = file.split('.')[0]
+        if (file_name == campaign_name):
+            return True
+    return False
+
+async def new_campaign(ctx, campaign_name):
+    if (check_campaign_exists(campaign_name)):
+        await bot.send_message(ctx.message.channel, campaign_name + ' already exists! Use a new name')
+        return
+    print("Creating new campaign with name: " + str(campaign_name))
+    copy2('data\\template.json', 'data\\' + campaign_name + '.json')
+    await bot.send_message(ctx.message.channel, campaign_name + ' has been created! :tada:')
+
+@bot.command(pass_context=True)
+async def campaign(ctx, campaign_type = None, campaign_name = None):
+    if (campaign_type is None or campaign_name is None):
+        await bot.send_message(ctx.message.channel, '```!campaign [new|status] ["name"]```')
+        return
+
+    if (campaign_type == 'new'):
+        await new_campaign(ctx, campaign_name)
+    else:
+        await bot.send_message(ctx.message.channel, 'More coming soon... :star2:')
 
 @bot.command(pass_context=True)
 async def roll(ctx, *args):
