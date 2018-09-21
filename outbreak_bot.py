@@ -51,11 +51,53 @@ async def campaign(ctx, campaign_type = None, campaign_name = None):
         await bot.send_message(ctx.message.channel, 'More coming soon... :star2:')
 
 async def generate_roll_embed(ctx, speed, percentile, diff, dam, dep):
+    speed_embed = None
+    percent_embed = None
+    damage_embed = None
+    deplete_embed = None
+
+    if (len(speed) > 0):
+        speed_embed = str(speed[0])
+        total = speed[0]
+        for roll in speed[1:]:
+            speed_embed += ' + ' + str(roll)
+            total += roll
+        speed_embed += ' = **__' + str(total) + '__**'
+
+    if (len(diff) > 0):
+        percent_embed = '__' + str(percentile) + '__ + ' + str(diff[0])
+        total = percentile + diff[0]
+        for roll in diff[1:]:
+            percent_embed += ' + ' + str(roll)
+            total += roll
+        percent_embed += ' = **__' + str(total) + '__**'
+    else:
+        percent_embed = '**__' + str(percentile) + '__**'
+
+    if (len(dam) > 0):
+        damage_embed = str(dam[0])
+        total = dam[0]
+        for roll in dam[1:]:
+            damage_embed += ' + ' + str(roll)
+            total += roll
+        damage_embed += ' = **__' + str(total) + '__**'
+
+    if (len(dep) > 0):
+        deplete_embed = str(dep[0])
+        total = dep[0]
+        for roll in dep[1:]:
+            deplete_embed += ' + ' + str(roll)
+            total += roll
+        deplete_embed += ' = **__' + str(total) + '__**'
+        
     embed=discord.Embed(color=0xff7171)
-    embed.add_field(name="Speed", value=str(speed), inline=True)
-    embed.add_field(name="Percentile", value=(str(percentile) + ' **+** ' + str(diff)), inline=True)
-    embed.add_field(name="Damage", value=str(diff), inline=True)
-    embed.add_field(name="Depletion", value=str(dep), inline=True)
+    if (speed_embed is not None):
+        embed.add_field(name="Speed", value=speed_embed, inline=True)
+    embed.add_field(name="Percentile", value=percent_embed, inline=True)
+    if (damage_embed is not None):
+        embed.add_field(name="Damage", value=damage_embed, inline=True)
+    if (deplete_embed is not None):
+        embed.add_field(name="Depletion", value=deplete_embed, inline=True)
     await bot.send_message(ctx.message.channel, embed=embed)
 
 @bot.command(pass_context=True)
@@ -78,7 +120,7 @@ async def roll(ctx, *args):
     if (speed_num is None) or (diff_num is None) or (dam_num is None) or (dep_num is None):
         await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# difficulty die] [# damage die] [# depletion die]```')
         return
-    if (speed_num < 1 or diff_num < 1 or dam_num < 1 or dep_num < 1):
+    if (speed_num < 1 or diff_num < 0 or dam_num < 0 or dep_num < 0):
         await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# difficulty die] [# damage die] [# depletion die]```')
         return
 
