@@ -15,16 +15,22 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def info(ctx):
     embed=discord.Embed(color=0xff7171)
-    embed.add_field(name="Python", value="3.6.4", inline=True)
-    embed.add_field(name="discord.py", value="1.0.0a", inline=True)
-    embed.add_field(name="About BlueTemp", value="This is an instance of BlueTemp, an open sorce Discord Bot created by RedstonedLife", inline=False)
-    embed.set_footer(text="A Template downloaded from Github")
+    embed.add_field(name="Python", value="3.6.5", inline=True)
+    embed.add_field(name="About OU2", value="This bot helps with Outbreak Undead 2E PbP games on Discord", inline=False)
+    embed.set_footer(text="Kaffo 2018")
     await bot.send_message(ctx.message.channel, embed=embed)
 
 @bot.command(pass_context=True)
-async def roll(ctx, speed_num = None):
+async def roll(ctx, *args):
+    if (len(args) < 1):
+        await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# black die] [# damage die]```')
+        return
+    try:
+        speed_num = int(args[0])
+    except:
+        speed_num = None
     print(speed_num)
-    if (speed_num is None) or (type(speed_num) is not int) or (type(speed_num) is int and speed_num < 1):
+    if (speed_num is None) or (type(speed_num) is int and speed_num < 1):
         await bot.send_message(ctx.message.channel, '```!roll [# speed die] [# black die] [# damage die]```')
         return
     speed_dice = random.randint(1, 6)
