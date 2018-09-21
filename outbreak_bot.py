@@ -50,45 +50,45 @@ async def campaign(ctx, campaign_type = None, campaign_name = None):
     else:
         await bot.send_message(ctx.message.channel, 'More coming soon... :star2:')
 
+def get_h_string(number):
+    if (number == 6):
+        return '***H***'
+    else:
+        return str(number)
+
+def get_embed_text(embed, dice):
+    if (len(dice) > 0):
+        embed = get_h_string(dice[0])
+        #TODO check this math on H
+        total = dice[0]
+        for roll in dice[1:]:
+            embed += ' + ' + get_h_string(roll)
+            total += roll
+        embed += ' = **__' + str(total) + '__**'
+    return embed
+
 async def generate_roll_embed(ctx, speed, percentile, diff, dam, dep):
     speed_embed = None
     percent_embed = None
     damage_embed = None
     deplete_embed = None
 
-    if (len(speed) > 0):
-        speed_embed = str(speed[0])
-        total = speed[0]
-        for roll in speed[1:]:
-            speed_embed += ' + ' + str(roll)
-            total += roll
-        speed_embed += ' = **__' + str(total) + '__**'
+    speed_embed = get_embed_text(speed_embed, speed)
 
+    # The percentile embed is slightly different
     if (len(diff) > 0):
-        percent_embed = '__' + str(percentile) + '__ + ' + str(diff[0])
+        percent_embed = '__' + str(percentile) + '__ + ' + get_h_string(diff[0])
+        #TODO check this math on H
         total = percentile + diff[0]
         for roll in diff[1:]:
-            percent_embed += ' + ' + str(roll)
+            percent_embed += ' + ' + get_h_string(roll)
             total += roll
         percent_embed += ' = **__' + str(total) + '__**'
     else:
         percent_embed = '**__' + str(percentile) + '__**'
 
-    if (len(dam) > 0):
-        damage_embed = str(dam[0])
-        total = dam[0]
-        for roll in dam[1:]:
-            damage_embed += ' + ' + str(roll)
-            total += roll
-        damage_embed += ' = **__' + str(total) + '__**'
-
-    if (len(dep) > 0):
-        deplete_embed = str(dep[0])
-        total = dep[0]
-        for roll in dep[1:]:
-            deplete_embed += ' + ' + str(roll)
-            total += roll
-        deplete_embed += ' = **__' + str(total) + '__**'
+    damage_embed = get_embed_text(damage_embed, dam)
+    deplete_embed = get_embed_text(deplete_embed, dep)
         
     embed=discord.Embed(color=0xff7171)
     if (speed_embed is not None):
